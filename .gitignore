@@ -1,0 +1,9 @@
+#Node
+/node_modules
+
+#Database
+/notes-data
+
+#Environment
+.env
+___README.md
