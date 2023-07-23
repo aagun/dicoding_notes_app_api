@@ -39,7 +39,7 @@ const ResponseHelper = {
     }
 
     const { statusCode, error: message } = error.output.payload;
-    if (statusCode === 401) {
+    if (statusCode.toString().startsWith(4)) {
       return h
         .response({
           status: "fail",

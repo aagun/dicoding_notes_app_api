@@ -31,13 +31,16 @@ class AuthenticationsHandler {
 
   async putAuthenticationHandler(request, h) {
     await this._validator.validatePutAuthenticationPayload(request.payload);
-
     const { refreshToken } = request.payload;
     await this._authenticationsService.verifyRefreshToken(refreshToken);
     const id = this._tokenManager.verifyRefreshToken(refreshToken);
     const accessToken = this._tokenManager.generateAccessToken({ id });
 
-    return ResponseHelper.ok(h, { accessToken });
+    return ResponseHelper.ok(
+      h,
+      { accessToken },
+      "Access Token berhasil diperbarui"
+    );
   }
 
   async deleteAuthenticationHandler(request, h) {
@@ -45,7 +48,7 @@ class AuthenticationsHandler {
     const { refreshToken } = request.payload;
     await this._authenticationsService.verifyRefreshToken(refreshToken);
     await this._authenticationsService.deleteRefreshToken(refreshToken);
-    return ResponseHelper.ok(h, "Refresh token berhasil dihapus");
+    return ResponseHelper.ok(h, null, "Refresh token berhasil dihapus");
   }
 }
 
