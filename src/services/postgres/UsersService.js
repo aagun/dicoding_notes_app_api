@@ -80,6 +80,16 @@ class UsersService {
 
     return id;
   }
+
+  async findByUsername(username) {
+    const query = {
+      text: "SELECT id, username, fullname FROM users WHERE username LIKE '%'||$1||'%'",
+      values: [username],
+    };
+
+    const { rows = [] } = await this._pool.query(query);
+    return rows;
+  }
 }
 
 module.exports = UsersService;

@@ -26,6 +26,12 @@ class UsersHandler {
     };
     return ResponseHelper.ok(h, { user });
   }
+
+  async getUserByUserNameHandler(request, h) {
+    const { username = "" } = request.query;
+    const users = await this._service.findByUsername(username);
+    return ResponseHelper.ok(h, { users });
+  }
 }
 
 module.exports = UsersHandler;
