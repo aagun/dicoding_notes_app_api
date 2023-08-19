@@ -12,11 +12,11 @@ class UploadHandler {
     this._validator.validateImageHeaders(data.hapi.headers);
 
     const filename = await this._service.writeFile(data, data.hapi);
-    const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/upload/images/${filename}`;
+    // const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/upload/images/${filename}`;
 
     return ResponseHelper.created(
       h,
-      { fileLocation },
+      { fileLocation: filename.Location },
       "Gambar berhasil diunggah"
     );
   }

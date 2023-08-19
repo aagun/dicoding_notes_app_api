@@ -34,15 +34,17 @@ const ExportsValidator = require("./validator/exports");
 
 // uploads
 const uploads = require("./api/uploads");
-const StorageService = require("./services/storage/StorageService");
+// const StorageService = require("./services/storage/StorageService");
+const StorageService = require("./services/S3/StorageService");
 const UploadsValidator = require("./validator/uploads");
 
 const init = async () => {
   const collaborationsService = new CollaborationsService();
   const notesService = new NotesService(collaborationsService);
-  const storageService = new StorageService(
-    path.resolve(__dirname, "api/uploads/file/images")
-  );
+  const storageService = new StorageService();
+  // const storageService = new StorageService(
+  //   path.resolve(__dirname, "api/uploads/file/images")
+  // );
 
   const server = Hapi.server({
     port: process.env.PORT,
