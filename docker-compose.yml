@@ -1,0 +1,22 @@
+version: '1'
+
+services:
+  postgres: 
+    container_name: "dicoding-notes-postgres"
+    image: postgres:15-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=developer
+      - POSTGRES_PASSWORD=dicoding
+      - POSTGRES_DATABASE=notes
+    volumes:
+      - ${PWD}/postgres-data:/var/lib/postgresql/data
+    networks:
+      - dicoding-notes-network
+
+networks:
+  dicoding-notes-network:
+    name: dicoding-notes-network
+    driver: bridge
