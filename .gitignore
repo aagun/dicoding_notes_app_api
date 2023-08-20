@@ -1,9 +1,8 @@
-#Node
-/node_modules
+# Node
+node_modules
 
-#Database
-/notes-data
+# Docker
+docker-volumes
 
-#Environment
+# Environment
 .env
-___README.md

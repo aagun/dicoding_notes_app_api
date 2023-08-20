@@ -3,8 +3,9 @@ const { Pool } = require("pg");
 const InvariantException = require("../../exceptions/InvariantException");
 
 class CollaborationsService {
-  constructor() {
+  constructor(cacheService) {
     this._pool = new Pool();
+    this._cacheService = cacheService;
   }
 
   async save(noteId, userId) {
@@ -17,6 +18,7 @@ class CollaborationsService {
     const { rows } = await this._pool.query(query);
 
     if (rows.length) {
+      await this._cacheService.delete(`notes:${userId}`);
       return rows[0].id;
     }
 
@@ -34,6 +36,8 @@ class CollaborationsService {
     if (!rows.length) {
       throw new InvariantException("Kolaborasi gagal dihapus");
     }
+
+    await this._cacheService.delete(`notes:${userId}`);
   }
 
   async verifyCollaborator(noteId, userId) {

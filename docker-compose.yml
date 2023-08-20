@@ -1,4 +1,4 @@
-version: '1'
+version: '3'
 
 services:
   postgres: 
@@ -12,7 +12,28 @@ services:
       - POSTGRES_PASSWORD=dicoding
       - POSTGRES_DATABASE=notes
     volumes:
-      - ${PWD}/postgres-data:/var/lib/postgresql/data
+      - ${PWD}/docker-volumes/postgres/data:/var/lib/postgresql/data
+    networks:
+      - dicoding-notes-network
+  rabbitmq:
+    container_name: "dicoding-notes-rabbitmq"
+    image: rabbitmq:3-management-alpine
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - dicoding-notes-network
+  redis:
+    container_name: "dicoding-notes-redis"
+    image: redis:7-alpine
+    command: redis-server /usr/local/etc/redis/redis.conf
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - ${PWD}/docker-volumes/redis/data:/data
+      - ${PWD}/docker-volumes/redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
     networks:
       - dicoding-notes-network
 

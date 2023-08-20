@@ -5,9 +5,10 @@ const NotFoundException = require("../../exceptions/NotFoundException");
 const AuthorizationException = require("../../exceptions/AuthorizationException");
 
 class NotesService {
-  constructor(collaborationsService) {
+  constructor(collaborationsService, cacheService) {
     this._pool = new Pool();
     this._collaborationsService = collaborationsService;
+    this._cacheService = cacheService;
   }
 
   async addNote({ title, body, tags, owner }) {
@@ -26,10 +27,16 @@ class NotesService {
       throw new InvariantException("Catatan gagal ditambahkan");
     }
 
+    await this._cacheService.delete(`notes:${owner}`);
     return result.rows[0].id;
   }
 
   async getNotes(owner) {
+    try {
+      const result = await this._cacheService.get(`notes:${owner}`);
+      return JSON.parse(result);
+    } catch (error) {}
+
     const query = {
       text: ` SELECT notes.* 
               FROM notes
@@ -38,7 +45,14 @@ class NotesService {
       values: [owner],
     };
     const result = await this._pool.query(query);
-    return result.rows.map(mapDBToModel);
+    const mappedResult = result.rows.map(mapDBToModel);
+
+    await this._cacheService.set(
+      `notes:${owner}`,
+      JSON.stringify(mappedResult)
+    );
+
+    return mappedResult;
   }
 
   async getNoteById(id) {
@@ -75,6 +89,8 @@ class NotesService {
       );
     }
 
+    await this._cacheService.delete(`notes:${result.rows[0].owner}`);
+
     return result.rows.map(mapDBToModel)[0];
   }
 
@@ -89,6 +105,8 @@ class NotesService {
     if (!result.rows.length) {
       throw new NotFoundException("Catatan gagal dihapus. Id tidak ditemukan");
     }
+
+    await this._cacheService.delete(`notes:${result.rows[0].owner}`);
 
     return result.rows.map(mapDBToModel)[0];
   }
